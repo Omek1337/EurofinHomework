@@ -43,7 +43,7 @@ namespace OrderMicroservice.Services
         {
             if (amount < 0 || amount >= 999)
             {
-                throw new Exception("Amount should be from 1 to 999");
+                throw new Exception(message: "Amount should be from 1 to 999");
             }
             return true;
         }

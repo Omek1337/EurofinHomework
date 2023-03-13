@@ -16,20 +16,38 @@ namespace OrderMicroservice.Controllers
         [Route("GetAllOrders")]
         public ActionResult<IEnumerable<OrderDto>> Get()
         {
-            var orders = _orderService.GetAll();
-            return Ok(orders);
+            try
+            {
+                var orders = _orderService.GetAll();
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+            
         }
         [HttpGet]
         [Route("create")]
         public ActionResult<OrderDto> Create(int amount, int customerId, DateTime deliveryDate)
         {
-            var order = _orderService.Create(new OrderDto
+            try
             {
-                Amount = amount,
-                CustomerId = customerId,
-                DeliveryDate = deliveryDate
-            });
-            return Ok(order);
+                var order = _orderService.Create(new OrderDto
+                {
+                    Amount = amount,
+                    CustomerId = customerId,
+                    DeliveryDate = deliveryDate
+                });
+                return Ok(order);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+            
         }
     }
 }
