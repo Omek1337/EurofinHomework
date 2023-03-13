@@ -21,6 +21,7 @@ namespace OrderMicroservice.Services
             var cost = amount >= 10 ? 
                 SetDiscount(amount, CountTotalCost(amount)) : 
                 CountTotalCost(amount);
+            if (!CheckDate(orderDto.DeliveryDate)) throw new Exception("Date cannot be less than NOW");
             await _orderRepository.Create(new Order
             {
                 Id = Guid.NewGuid(),
@@ -40,11 +41,17 @@ namespace OrderMicroservice.Services
         }
         private bool CheckAmount(int amount)
         {
-            if (amount < 0 || amount > 999)
+            if (amount < 0 || amount >= 999)
             {
-                return false;
+                throw new Exception("Amount should be from 1 to 999");
             }
             return true;
+        }
+
+        private bool CheckDate(DateTime date)
+        {
+            
+            return DateTime.UtcNow <= date ? true : false;
         }
         private decimal CountTotalCost(int amount) => amount * _price;
 
