@@ -1,25 +1,29 @@
-﻿using OrderMicroservice.DTOs;
+﻿using DataContext.Models;
+using OrderMicroservice.DTOs;
 using OrderMicroservice.Interfaces;
-using OrderMicroservice.Models;
+using OrderMicroservice.Repositories;
 
 namespace OrderMicroservice.Services
 {
 
     public class OrderService : IOrderService
     {
-        private List<Order> _ordersList => new();
+        private readonly IOrderRepository _orderRepository;
+        public OrderService(IOrderRepository orderRepository)
+        {
+            _orderRepository = orderRepository;
+        }
+
         private decimal _price = 98.99M;
-        private int idCounter = 1;
-        public OrderDto Create(OrderDto orderDto)
+        public async Task<OrderDto> Create(OrderDto orderDto)
         {
             var amount = CheckAmount(orderDto.Amount) ? orderDto.Amount : 0;
             var cost = amount >= 10 ? 
                 SetDiscount(amount, CountTotalCost(amount)) : 
                 CountTotalCost(amount);
-
-            _ordersList.Add(new Order
+            await _orderRepository.Create(new Order
             {
-                Id = idCounter++,
+                Id = Guid.NewGuid(),
                 Amount = orderDto.Amount,
                 Cost = Math.Round(cost, 2, MidpointRounding.AwayFromZero),
                 CustomerId = orderDto.CustomerId,
@@ -31,7 +35,7 @@ namespace OrderMicroservice.Services
 
         public List<OrderDto> GetAll()
         {
-            var orders = _ordersList.OrderBy(x => x.Id).ToList();
+            var orders = _orderRepository.GetAll();
             return MapOrdersToDtos(orders);
         }
         private bool CheckAmount(int amount)

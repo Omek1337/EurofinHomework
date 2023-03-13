@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OrderMicroservice.DTOs;
 using OrderMicroservice.Interfaces;
-using OrderMicroservice.Models;
 
 namespace OrderMicroservice.Controllers
 {
