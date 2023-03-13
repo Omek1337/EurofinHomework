@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OrderMicroservice.DTOs;
+using OrderMicroservice.Interfaces;
+using OrderMicroservice.Models;
 
 namespace OrderMicroservice.Controllers
 {
@@ -8,17 +9,28 @@ namespace OrderMicroservice.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
+        private readonly IOrderService _orderService;
+
+        public OrderController(IOrderService orderService) => _orderService = orderService;
 
         [HttpGet]
         [Route("GetAllOrders")]
         public ActionResult<IEnumerable<OrderDto>> Get()
         {
-            return Ok();
+            var orders = _orderService.GetAll();
+            return Ok(orders);
         }
-
-        public ActionResult Create()
+        [HttpGet]
+        [Route("create")]
+        public ActionResult<OrderDto> Create(int amount, int customerId, DateTime deliveryDate)
         {
-            return Ok();
+            var order = _orderService.Create(new OrderDto
+            {
+                Amount = amount,
+                CustomerId = customerId,
+                DeliveryDate = deliveryDate
+            });
+            return Ok(order);
         }
     }
 }

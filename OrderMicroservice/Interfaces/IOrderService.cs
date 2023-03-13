@@ -1,6 +1,11 @@
-﻿namespace OrderMicroservice.Interfaces
+﻿using OrderMicroservice.DTOs;
+using OrderMicroservice.Models;
+
+namespace OrderMicroservice.Interfaces
 {
-    interface IOrderService
+    public interface IOrderService
     {
+        public OrderDto Create(OrderDto orderDto);
+        public List<OrderDto> GetAll();
     }
 }
