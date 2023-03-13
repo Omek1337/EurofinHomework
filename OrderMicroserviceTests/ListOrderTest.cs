@@ -5,7 +5,9 @@
         [Fact]
         public void GetAllOrders()
         {
-
+            // arrange
+            // act
+            // assert
         }
     }
 }
