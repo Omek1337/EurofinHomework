@@ -1,3 +1,9 @@
+using Moq;
+using OrderMicroservice.DTOs;
+using OrderMicroservice.Exceptions;
+using OrderMicroservice.Interfaces;
+using OrderMicroservice.Services;
+
 namespace OrderMicroserviceTests
 {
     public class CreateOrderTest
@@ -22,24 +28,48 @@ namespace OrderMicroserviceTests
         public void RejectWhenDateIsNotInTheFuture()
         {
             // arrange
-            // act
+            var repositoryMock = new Mock<IOrderRepository>();
+            var orderService = new OrderService(repositoryMock.Object);
+
             // assert
+            Assert.ThrowsAsync<DateNotRightException>(async () => await orderService.Create(new OrderDto
+            {
+                Amount = 1,
+                CustomerId = 1,
+                DeliveryDate = DateTime.UtcNow.AddDays(-1),
+            }));
         }
 
         [Fact]
         public void RejectWhenAmountIsNegative()
         {
             // arrange
-            // act
+            var repositoryMock = new Mock<IOrderRepository>();
+            var orderService = new OrderService(repositoryMock.Object);
+
             // assert
+            Assert.ThrowsAsync<AmountNotRightException>(async () => await orderService.Create(new OrderDto
+            {
+                Amount = -1,
+                CustomerId = 1,
+                DeliveryDate = DateTime.UtcNow.AddDays(1),
+            }));
         }
 
         [Fact]
         public void RejectWhenAmountIsMoreThan999()
         {
             // arrange
-            // act
+            var repositoryMock = new Mock<IOrderRepository>();
+            var orderService = new OrderService(repositoryMock.Object);
+
             // assert
+            Assert.ThrowsAsync<AmountNotRightException>(async () => await orderService.Create(new OrderDto
+            {
+                Amount = 1001,
+                CustomerId = 1,
+                DeliveryDate = DateTime.UtcNow.AddDays(1),
+            }));
         }
 
         [Fact]

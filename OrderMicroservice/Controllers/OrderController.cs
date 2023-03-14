@@ -34,20 +34,38 @@ namespace OrderMicroservice.Controllers
         {
             try
             {
-                var order = _orderService.Create(new OrderDto
+                if (CheckAmount(amount) && CheckDate(deliveryDate)) 
                 {
-                    Amount = amount,
-                    CustomerId = customerId,
-                    DeliveryDate = deliveryDate
-                });
-                return Ok(order);
+                    var order = _orderService.Create(new OrderDto
+                    {
+                        Amount = amount,
+                        CustomerId = customerId,
+                        DeliveryDate = deliveryDate
+                    }).Result;
+                    return Ok(order);
+                }
+                return BadRequest("Wrong date or amount");
             }
             catch (Exception ex)
             {
 
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
+            }   
+        }
+
+        private bool CheckAmount(int amount)
+        {
+            if (amount < 0 || amount >= 999)
+            {
+                return false;
             }
-            
+            return true;
+        }
+
+        private bool CheckDate(DateTime date)
+        {
+
+            return DateTime.UtcNow <= date ? true : false;
         }
     }
 }

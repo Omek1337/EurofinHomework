@@ -1,4 +1,6 @@
 ﻿using DataContext.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using OrderMicroservice.DTOs;
 using OrderMicroservice.Interfaces;
 using OrderMicroservice.Repositories;
@@ -17,11 +19,10 @@ namespace OrderMicroservice.Services
         private decimal _price = 98.99M;
         public async Task<OrderDto> Create(OrderDto orderDto)
         {
-            var amount = CheckAmount(orderDto.Amount) ? orderDto.Amount : 0;
-            var cost = amount >= 10 ? 
-                SetDiscount(amount, CountTotalCost(amount)) : 
-                CountTotalCost(amount);
-            if (!CheckDate(orderDto.DeliveryDate)) throw new Exception("Date cannot be less than NOW");
+
+            var cost = orderDto.Amount >= 10 ?
+                SetDiscount(orderDto.Amount, CountTotalCost(orderDto.Amount)) :
+                CountTotalCost(orderDto.Amount);
             await _orderRepository.Create(new Order
             {
                 Id = Guid.NewGuid(),
@@ -32,26 +33,13 @@ namespace OrderMicroservice.Services
             });
             orderDto.Cost = Math.Round(cost, 2, MidpointRounding.AwayFromZero);
             return orderDto;
+            
         }
 
         public List<OrderDto> GetAll()
         {
             var orders = _orderRepository.GetAll();
             return MapOrdersToDtos(orders);
-        }
-        private bool CheckAmount(int amount)
-        {
-            if (amount < 0 || amount >= 999)
-            {
-                throw new Exception(message: "Amount should be from 1 to 999");
-            }
-            return true;
-        }
-
-        private bool CheckDate(DateTime date)
-        {
-            
-            return DateTime.UtcNow <= date ? true : false;
         }
         private decimal CountTotalCost(int amount) => amount * _price;
 
