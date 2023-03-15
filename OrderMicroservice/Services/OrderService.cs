@@ -39,6 +39,10 @@ namespace OrderMicroservice.Services
         public List<OrderDto> GetAll()
         {
             var orders = _orderRepository.GetAll();
+            if (orders == null)
+            {
+                return new List<OrderDto>();
+            }
             return MapOrdersToDtos(orders);
         }
         private decimal CountTotalCost(int amount) => amount * _price;

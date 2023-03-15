@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using OrderMicroservice.DTOs;
 using OrderMicroservice.Interfaces;
 
@@ -42,7 +43,7 @@ namespace OrderMicroservice.Controllers
                         CustomerId = customerId,
                         DeliveryDate = deliveryDate
                     }).Result;
-                    return Ok(order);
+                    return order == null ? NoContent() : Ok(order);
                 }
                 return BadRequest("Wrong date or amount");
             }
